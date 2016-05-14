@@ -1,0 +1,40 @@
+exports.handler = function(event, context, callback) {
+    var AWS = require('aws-sdk');
+    AWS.config.region = 'us-west-2';
+    var SES = new AWS.SES();
+
+    var to = (event.to === undefined ? 'Undefined (to)' : event.to);
+    var body = (event.body === undefined ? 'Undefined (body)' : event.body);
+    var from = (event.from === undefined ? 'Undefined (from)' : event.from);
+    var id = (event.id === undefined ? 'Undefined (id)' : event.id);
+  
+    var emailParams = {
+        Destination: {
+            ToAddresses: ["recipient@edge-cloud.net"]
+        },
+        Message: {
+            Body: {
+                Html: {
+                    Data: "From: " + from + "<br>To: " + to + "<br>Message: " + body + "<p>ID: " + id
+                },
+                Text: {
+                    Data: "From: " + from + "\nTo: " + to + "\nMessage: " + body + "\n\n" + id
+                }
+            },
+            Subject: {
+                Data: "Text message to " + to
+            }
+        },
+        Source: from + "<sms@edge-cloud.net>"
+    };
+    
+    var email = SES.sendEmail(emailParams, function(err, data){
+        if(err) {
+            console.log(err);
+            callback("Message delivery failed");
+        } else {
+            console.log(data);
+            callback(null, "Message delivered");    
+        }
+    });
+};
