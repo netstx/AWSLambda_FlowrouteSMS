@@ -1,4 +1,4 @@
-# AWSLambdaFlowrouteSMS
+# AWSLambdaFlowrouteSMS [![Build Status](https://travis-ci.org/chriselsen/AWSLambda_FlowrouteSMS.svg?branch=master)](https://travis-ci.org/chriselsen/AWSLambda_FlowrouteSMS)
 AWS Lambda Function to process Flowroute text messages.
 Refer to https://wp.me/p3w6wb-A0 for more information
 
