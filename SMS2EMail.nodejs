@@ -3,10 +3,11 @@ exports.handler = function(event, context, callback) {
     AWS.config.region = 'us-west-2';
     var SES = new AWS.SES();
 
-    var to = (event.to === undefined ? 'Undefined (to)' : event.to);
-    var body = (event.body === undefined ? 'Undefined (body)' : event.body);
-    var from = (event.from === undefined ? 'Undefined (from)' : event.from);
-    var id = (event.id === undefined ? 'Undefined (id)' : event.id);
+    var obj = JSON.parse(event.body);
+    var to = (obj.to === undefined ? 'Undefined (to)' : obj.to);
+    var body = (obj.body === undefined ? 'Undefined (body)' : obj.body);
+    var from = (obj.from === undefined ? 'Undefined (from)' : obj.from);
+    var id = (obj.id === undefined ? 'Undefined (id)' : obj.id);
   
     var emailParams = {
         Destination: {
@@ -30,11 +31,27 @@ exports.handler = function(event, context, callback) {
     
     var email = SES.sendEmail(emailParams, function(err, data){
         if(err) {
-            console.log(err);
-            callback("Message delivery failed");
+            var responseBody = {
+                message: "Message failed"
+            };
+            
+            var response = {
+                statusCode: '500',
+                body: JSON.stringify(responseBody)
+            };
+            console.log("response: " + JSON.stringify(response))
+            context.succeed(response);
         } else {
-            console.log(data);
-            callback(null, "Message delivered");    
+            var responseBody = {
+                message: "Message suceeded"
+            };
+            
+            var response = {
+                statusCode: '200',
+                body: JSON.stringify(responseBody)
+            };
+            console.log("response: " + JSON.stringify(response))
+            context.succeed(response);    
         }
     });
 };
